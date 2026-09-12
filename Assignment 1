@@ -1,1 +1,54 @@
+# Assignment 1
+# Student Data Management Using Python Collections
+
+# Creating a Dictionary
+student_dict = {
+    "Student_1" : {"Name" : "Aarav Mehta", 
+                   "Roll Number" : "126101", 
+                   "Branch" : "Computer Science and Engineering (Artificial Intelligence and Data Science)", 
+                   "Marks" : 97},
+    "Student_2" : {"Name" : "Riya Sharma", 
+                   "Roll Number" : "126102", 
+                   "Branch" : "Computer Science and Engineering (Cloud Computing)", 
+                   "Marks" : 86},
+    "Student_3" : {"Name" : "Kabir Joshi", 
+                   "Roll Number" : "126103", 
+                   "Branch" : "Computer Science and Engineering (Artificial Intelligence and Data Science)", 
+                   "Marks" : 96},
+    "Student_4" : {"Name" : "Ananya Patel", 
+                   "Roll Number" : "126104", 
+                   "Branch" : "Computer Science and Engineering (Cyber Security & Forensics)", 
+                   "Marks" : 79},
+    "Student_5" : {"Name" : "Vihaan Rao", 
+                   "Roll Number" : "126105", 
+                   "Branch" : "Electronics (Semiconductor & VLSI Design)", 
+                   "Marks" : 88}
+}
+
+# Operation 1: Adding Student Record
+new_student_info = {
+    "Name" : "Siddharth Verma",
+    "Roll Number" : "126106",
+    "Branch" : "Electrical and Computer Engineering",
+    "Marks" : 95
+}
+student_dict["Student_6"] = new_student_info
+
+# Operation 2: Deleting Student Record
+student_dict.pop("Student_3")
+
+# Operation 3: Updating Student Record
+student_dict["Student_4"]["Marks"] = 100
+
+# Displaying the final student records
+print(student_dict)
+
+# Creating a Tuple and printing it
+student_tuple = ("Aarav Mehta", "Riya Sharma", "Kabir Joshi", "Ananya Patel", "Vihaan Rao", "Siddharth Verma")
+print(student_tuple)
+
+# Creating a List and printing it
+student_list = ["Aarav Mehta", "Riya Sharma", "Kabir Joshi", "Ananya Patel", "Vihaan Rao", "Siddharth Verma"]
+print(student_list)
+
 
