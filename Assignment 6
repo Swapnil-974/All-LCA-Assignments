@@ -1,1 +1,141 @@
 
+import pandas as pd
+import numpy as np
+import os
+
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler
+
+
+def data_preprocessing(file_path):
+
+    # 1. Load dataset
+    extension = os.path.splitext(file_path)[1].lower()
+
+    if extension == ".csv":
+        df = pd.read_csv(file_path)
+
+    elif extension in [".xls", ".xlsx"]:
+        df = pd.read_excel(file_path)
+
+    else:
+        print("Unsupported file format!")
+        return
+
+    print("\nOriginal Dataset:")
+    print(df.head())
+
+    print("\nDataset Shape:", df.shape)
+
+    # 2. Dataset information
+    print("\nDataset Information:")
+    print(df.info())
+
+    print("\nMissing Values:")
+    print(df.isnull().sum())
+
+    # 3. Remove duplicate records
+    df.drop_duplicates(inplace=True)
+
+    print("\nDuplicates Removed.")
+
+    # 4. Convert data types
+    for col in df.columns:
+        if df[col].dtype == "object":
+            converted = pd.to_numeric(df[col], errors="coerce")
+
+            # Convert only if all non-missing values are numeric
+            if converted.notna().sum() == df[col].notna().sum():
+                df[col] = converted
+
+    # 5. Handle missing values
+    for col in df.columns:
+
+        if df[col].isnull().sum() > 0:
+
+            if pd.api.types.is_numeric_dtype(df[col]):
+                df[col] = df[col].fillna(df[col].median())
+
+            else:
+                mode = df[col].mode()
+
+                if not mode.empty:
+                    df[col] = df[col].fillna(mode[0])
+                else:
+                    df[col] = df[col].fillna("Unknown")
+
+    print("\nMissing Values Handled.")
+
+    # 6. Encode categorical columns
+    categorical_cols = df.select_dtypes(
+        include=["object", "category"]
+    ).columns
+
+    encoders = {}
+
+    for col in categorical_cols:
+        le = LabelEncoder()
+        df[col] = le.fit_transform(df[col].astype(str))
+        encoders[col] = le
+
+    print("\nCategorical Data Encoded.")
+
+    # 7. Handle outliers using IQR
+    numerical_cols = df.select_dtypes(
+        include=np.number
+    ).columns
+
+    for col in numerical_cols:
+
+        Q1 = df[col].quantile(0.25)
+        Q3 = df[col].quantile(0.75)
+
+        IQR = Q3 - Q1
+
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
+
+        df[col] = df[col].clip(
+            lower_bound,
+            upper_bound
+        )
+
+    print("\nOutliers Handled.")
+
+    # 8. Normalize numerical columns
+    if len(numerical_cols) > 0:
+
+        scaler = MinMaxScaler()
+
+        df[numerical_cols] = scaler.fit_transform(
+            df[numerical_cols]
+        )
+
+    print("\nNumerical Data Normalized.")
+
+    # 9. Save preprocessed dataset
+    output_file = "preprocessed_data.csv"
+
+    df.to_csv(output_file, index=False)
+
+    print("\nPreprocessed Dataset:")
+    print(df.head())
+
+    print("\nFinal Dataset Shape:", df.shape)
+
+    print("\nPreprocessing Completed Successfully!")
+    print("Output saved as:", output_file)
+
+
+# Main program
+if __name__ == "__main__":
+
+    file_path = input(
+        "Enter CSV/XLS/XLSX file path: "
+    )
+
+    if os.path.exists(file_path):
+        data_preprocessing(file_path)
+
+    else:
+        print("File not found!")
+
